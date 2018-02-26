@@ -80,26 +80,55 @@ module.exports = function solveSudoku(matrix) {
     }
   });
 
-  var solve = function (matrixToSolve, rowANArray, columnANArray, squareANArray, emptyCArray) {
+  var solve = function (matrixToSolve, /*rowANArray, columnANArray, squareANArray,*/ emptyCArray) {
+    if(emptyCArray.length == 0) {
+      return matrixToSolve;
+    }
     var mToSolve = matrixToSolve.slice();
-    var rowANA = [];
-    var columnANA = [];
-    var squareANA = [];
+    //var rowANA = [];
+    //var columnANA = [];
+    //var squareANA = [];
     var emptyCA = [];
-    
-    for(let k = 0; k < 9; k++) {
+    var leastVariants;
+
+    /*for(let k = 0; k < 9; k++) {
       rowANA.push(rowANArray[k].slice());
       columnANA.push(columnANArray[k].slice());
       squareANA.push(squareANArray[k].slice());
-    }
+    }*/
     emptyCArray.forEach(element => {
       emptyCA.push({row : element.row, column : element.column, square : element.square, variants : element.variants.slice()});
     });
+
+    leastVariants = emptyCA[0].variants.length;
+
     
-    console.log(emptyCA);
+    for(let i = 0; i < emptyCA.length; i++) {
+      let element = emptyCA[i];
+      let valueToSet;
+      if(element.variants.length === 1) {
+        mToSolve = matrixToSolve.slice();
+        valueToSet = element.variants[0];
+        mToSolve[9*element.row + element.column] = valueToSet;
+        emptyCA = [];
+        emptyCArray.forEach(el => {
+          emptyCA.push({row : el.row, column : el.column, square : el.square, variants : el.variants.slice()});
+        });
+        emptyCA.splice(i, 1);
+        emptyCA.forEach(el => {
+          if(el.row == element.row || el.column == element.column || el.square == element.square) {
+            let index = el.variants.indexOf(valueToSet);
+            if(index != -1) {
+              el.variants.splice(index, 1);
+            }
+          }
+        });
+      }
+
+    }
   }
 
-  solve(mMatrix, rowAvailableNumbersArray, columnAvailableNumbersArray, squareAvailableNumbersArray, emptyCellsArray);
+  solve(mMatrix, /*rowAvailableNumbersArray, columnAvailableNumbersArray, squareAvailableNumbersArray,*/ emptyCellsArray);
 
   roots.forEach(el => {
     //console.log(el.row + " " + el.column + " " + el.variants);
