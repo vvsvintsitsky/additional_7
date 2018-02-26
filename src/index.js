@@ -22,9 +22,7 @@ module.exports = function solveSudoku(matrix) {
     rowAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     columnAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     squareAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
     mMatrix = mMatrix.concat(matrix[k]);
-    
   }
 
   var offset = 0;
@@ -49,10 +47,6 @@ module.exports = function solveSudoku(matrix) {
     }
   }
 
-  if(emptyCellsArray.length == 0) {
-    return matrix;
-  }
-
   emptyCellsArray.forEach(element => {
     variants = 0;
     for(let k = 0; k < rowAvailableNumbersArray[element.row].length; k++) {
@@ -73,38 +67,16 @@ module.exports = function solveSudoku(matrix) {
     
   });
 
-  var roots = [];
-  emptyCellsArray.forEach(element => {
-    if(element.variants.length == leastVariants) {
-      roots.push(element);
-    }
-  });
-
   var solve = function (matrixToSolve, /*rowANArray, columnANArray, squareANArray,*/ emptyCArray) {
     if(emptyCArray.length == 0) {
       return matrixToSolve;
     }
-    var mToSolve = matrixToSolve.slice();
-    //var rowANA = [];
-    //var columnANA = [];
-    //var squareANA = [];
+    var mToSolve = [];
     var emptyCA = [];
     var leastVariants;
-
-    /*for(let k = 0; k < 9; k++) {
-      rowANA.push(rowANArray[k].slice());
-      columnANA.push(columnANArray[k].slice());
-      squareANA.push(squareANArray[k].slice());
-    }*/
-    emptyCArray.forEach(element => {
-      emptyCA.push({row : element.row, column : element.column, square : element.square, variants : element.variants.slice()});
-    });
-
-    leastVariants = emptyCA[0].variants.length;
-
     
-    for(let i = 0; i < emptyCA.length; i++) {
-      let element = emptyCA[i];
+    for(let i = 0; i < emptyCArray.length; i++) {
+      let element = emptyCArray[i];
       let valueToSet;
       if(element.variants.length === 1) {
         mToSolve = matrixToSolve.slice();
@@ -123,23 +95,23 @@ module.exports = function solveSudoku(matrix) {
             }
           }
         });
+        return solve(mToSolve, emptyCA);
       }
 
     }
   }
 
-  solve(mMatrix, /*rowAvailableNumbersArray, columnAvailableNumbersArray, squareAvailableNumbersArray,*/ emptyCellsArray);
 
-  roots.forEach(el => {
-    //console.log(el.row + " " + el.column + " " + el.variants);
-  });
-  //console.log(roots + " " + leastVariants + " " + bestEmptyCell.variants);
 
-  for(let k = 0; k < 9; k++) {
-    //console.log(rowAvailableNumbersArray[k]);
-    //rowAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    //columnAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    //squareAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+  var result = solve(mMatrix, /*rowAvailableNumbersArray, columnAvailableNumbersArray, squareAvailableNumbersArray,*/ emptyCellsArray);
+
+  if(Array.isArray(result)) {
+    var resultMarix = [];
+    for(let l = 0; l < 9; l++) {
+      resultMarix.push(result.slice(l*9,(l+1)*9));
+    }
+    console.log(resultMarix);
+    return resultMarix;
   }
-
 }
