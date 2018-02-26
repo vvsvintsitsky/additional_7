@@ -73,8 +73,6 @@ module.exports = function solveSudoku(matrix) {
     
   });
 
-  console.log(emptyCellsArray[1].variants);
-
   var roots = [];
   emptyCellsArray.forEach(element => {
     if(element.variants.length == leastVariants) {
@@ -83,17 +81,25 @@ module.exports = function solveSudoku(matrix) {
   });
 
   var solve = function (matrixToSolve, rowANArray, columnANArray, squareANArray, emptyCArray) {
-    var mToSolve = matrixToSolve.splice();
-
+    var mToSolve = matrixToSolve.slice();
+    var rowANA = [];
+    var columnANA = [];
+    var squareANA = [];
+    var emptyCA = [];
+    
     for(let k = 0; k < 9; k++) {
-      rowAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-      columnAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-      squareAvailableNumbersArray.push([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  
-      mMatrix = mMatrix.concat(matrix[k]);
-      
+      rowANA.push(rowANArray[k].slice());
+      columnANA.push(columnANArray[k].slice());
+      squareANA.push(squareANArray[k].slice());
     }
+    emptyCArray.forEach(element => {
+      emptyCA.push({row : element.row, column : element.column, square : element.square, variants : element.variants.slice()});
+    });
+    
+    console.log(emptyCA);
   }
+
+  solve(mMatrix, rowAvailableNumbersArray, columnAvailableNumbersArray, squareAvailableNumbersArray, emptyCellsArray);
 
   roots.forEach(el => {
     //console.log(el.row + " " + el.column + " " + el.variants);
